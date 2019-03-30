@@ -6,7 +6,7 @@ const User = require('../models/user');
 
 const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
 
-router.get('/me', isLoggedIn(), (req, res, next) => {
+router.get('/',  (req, res, next) => {
   res.json(req.session.currentUser);
 });
 
@@ -38,7 +38,7 @@ router.post('/login', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
 
 router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
   const { username, password, name, email } = req.body;
-
+  console.log('kiu');
   User.findOne({
       username
     }, 'username')

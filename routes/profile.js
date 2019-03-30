@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/user');
+const Tuit = require('../models/tuit');
 
 const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
 
@@ -12,7 +12,25 @@ const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/midd
 
   router.get('/:username', isLoggedIn(), (req, res, next) => {
     console.log('user');
-    res.status(200).json();
+    res.status(200).json('Hola');
+  });
+
+  router.post('/:username', isLoggedIn(), async (req, res, next) => {
+    console.log(req.body);
+    const tuit = req.body;
+    console.log('entra');
+    if (!tuit.info) {
+      res.status(400);
+      res.json({ message: 'Make sure you include text' });
+      return;
+    }
+    try {
+      const newTuit = await Tuit.create(tuit);
+      res.status(200);
+      res.json(newTuit);
+    } catch (error) {
+      next(error);
+    }
   });
 
 
