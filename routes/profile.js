@@ -59,5 +59,36 @@ const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/midd
     }
   });
 
+  router.delete('/:username/:id', isLoggedIn(), async (req, res, next) => {
+    const { id } = req.params;
+    const { tuits, _id } = req.session.currentUser;
+    let e;
+
+    try {
+
+      for(let i = 0; i<tuits.length; i++) {
+        if(tuits[i]._id === id) {
+          e = tuits[i].item
+          console.log(e);
+        }
+      }
+      console.log(e);
+      const deleteTuit = await Tuit.deleteOne({_id:e});
+
+
+      //elimina el tuit de la array de users
+      const updatedUser = await User.findByIdAndUpdate(_id, { $pull: { tuits: { _id: id } } }, { new: true });
+      req.session.currentUser = updatedUser;
+
+
+      res.status(200);
+      res.json({ message: 'Tuit deleted'});
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  
+
 
 module.exports = router;
