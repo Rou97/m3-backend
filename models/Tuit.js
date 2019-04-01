@@ -7,7 +7,7 @@ const tuitSchema = new Schema({
     info: {
         type: String,
         required: true
-    }, 
+    },
 }, {
     timestamps: {
         createdAt: 'created_at',

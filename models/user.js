@@ -22,10 +22,16 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  tuits: {
-    type: ObjectId,
-    ref: 'Tuit'
-  },
+  tuits: [{
+    item: {
+      type: ObjectId,
+      ref: 'Tuit'
+    },
+    info: {
+      type: String,
+      required: true
+    },
+  }],
 }, {
   timestamps: {
     createdAt: 'created_at',
