@@ -10,6 +10,10 @@ const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/midd
     res.status(200).json();
   });
 
+  router.get('/search', isLoggedIn(), (req, res, next) => {
+    res.status(200).json('holaaaaaaaa');
+  });
+
   router.get('/:username', isLoggedIn(), async (req, res, next) => {
     const { tuits, _id } = req.session.currentUser;
     try {
