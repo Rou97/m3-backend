@@ -24,8 +24,9 @@ router.get('/:username', isLoggedIn(), async (req, res, next) => {
   try {
 
     const user = await User.findOne({username});
-
+    console.log(user);
     const tuitsByUser = await Tuit.find({creator:user._id});
+    console.log('esto', tuitsByUser);
     
     if (!tuitsByUser.length) {
       res.status(404);
