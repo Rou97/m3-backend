@@ -6,89 +6,74 @@ const User = require('../models/user');
 
 const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
 
-  router.get('/', isLoggedIn(), (req, res, next) => {
-    res.status(200).json();
-  });
+router.get('/', isLoggedIn(), (req, res, next) => {
+  res.status(200).json();
+});
 
-  router.get('/search', isLoggedIn(), (req, res, next) => {
-    res.status(200).json('holaaaaaaaa');
-  });
+router.get('/search', isLoggedIn(), (req, res, next) => {
+  res.status(200).json('holaaaaaaaa');
+});
 
-  router.get('/:username', isLoggedIn(), async (req, res, next) => {
-    const { tuits, _id } = req.session.currentUser;
-    try {
-       
-      // allTuits = await Tuit.find();
-      // console.log('tuits', tuits);
-      // console.log('allTuits', allTuits);
+router.get('/follow', isLoggedIn(), (req, res, next) => {
+  res.status(200).json('holaaaaaaaa');
+});
 
-      if (!tuits.length) {
-        res.status(404);
-        res.json({ message: 'Tuits not found' });
-        return;
-      }
-      res.json(tuits);
-    } catch (error) {
-      next(error);
-    }
-  });
+router.get('/:username', isLoggedIn(), async (req, res, next) => {
+  const { username } = req.params;
 
-  router.get('/:username/tuit', isLoggedIn(), async (req, res, next) => {
-      console.log('user');
-      res.status(200).json('estoy');
-  });
+  try {
 
+    const user = await User.findOne({username});
 
-  router.post('/:username', isLoggedIn(), async (req, res, next) => {
-    const tuit = req.body;
-    if (!tuit.info) {
-      res.status(400);
-      res.json({ message: 'Make sure you include text' });
+    const tuitsByUser = await Tuit.find({creator:user._id});
+    
+    if (!tuitsByUser.length) {
+      res.status(404);
+      res.json({ message: 'Tuits not found' });
       return;
     }
-    try {
-      const { tuits, _id } = req.session.currentUser;
-      const newTuit = await Tuit.create(tuit);
-      console.log('newTuit', newTuit);
-      const updatedUser = await User.findByIdAndUpdate(_id, { $push: { tuits: { item: newTuit._id, info: newTuit.info } } }, { new: true });
-      req.session.currentUser = updatedUser;
-      res.status(200);
-      res.json(newTuit);
-    } catch (error) {
-      next(error);
-    }
-  });
+    res.json(tuitsByUser);
+  } catch (error) {
+    next(error);
+  }
+});
 
-  router.delete('/:username/:id', isLoggedIn(), async (req, res, next) => {
-    const { id } = req.params;
-    const { tuits, _id } = req.session.currentUser;
-    let e;
-
-    try {
-
-      for(let i = 0; i<tuits.length; i++) {
-        if(tuits[i]._id === id) {
-          e = tuits[i].item
-          console.log(e);
-        }
-      }
-      console.log(e);
-      const deleteTuit = await Tuit.deleteOne({_id:e});
+router.get('/:username/tuit', isLoggedIn(), async (req, res, next) => {
+  console.log('user');
+  res.status(200).json('estoy');
+});
 
 
-      //elimina el tuit de la array de users
-      const updatedUser = await User.findByIdAndUpdate(_id, { $pull: { tuits: { _id: id } } }, { new: true });
-      req.session.currentUser = updatedUser;
+router.post('/:username', isLoggedIn(), async (req, res, next) => {
+  const { info } = req.body;
+  console.log('create tuit: ', info);
+  if (!info) {
+    res.status(400);
+    res.json({ message: 'Make sure you include text' });
+    return;
+  }
+  try {
+    const { _id } = req.session.currentUser;
+    const newTuit = await Tuit.create({ info, creator: _id });
+    console.log('newTuit', newTuit);
+    res.status(200);
+    res.json(newTuit);
+  } catch (error) {
+    next(error);
+  }
+});
 
+router.delete('/:username/:id', isLoggedIn(), async (req, res, next) => {
+  const { id: idTuit } = req.params;
 
-      res.status(200);
-      res.json({ message: 'Tuit deleted'});
-    } catch (error) {
-      next(error);
-    }
-  });
-
-  
-
+  try {
+    const deleteTuit = await Tuit.findByIdAndDelete(idTuit);
+    console.log("deleteTuit", deleteTuit);
+    res.status(200);
+    res.json({ tuit: deleteTuit, message: 'Tuit deleted' });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

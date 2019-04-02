@@ -22,15 +22,14 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  // follows: [
+  //   {
+  //     type: ObjectId,
+  //     ref: 'User'
+  //   }],
   tuits: [{
-    item: {
       type: ObjectId,
       ref: 'Tuit'
-    },
-    info: {
-      type: String,
-      required: true
-    },
   }],
 }, {
   timestamps: {
