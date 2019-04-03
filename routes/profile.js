@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Tuit = require('../models/Tuit');
 const User = require('../models/user');
+const Follow = require('../models/Follow');
 
 const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
 
@@ -17,6 +18,55 @@ router.get('/search', isLoggedIn(), (req, res, next) => {
 router.get('/follow', isLoggedIn(), (req, res, next) => {
   res.status(200).json('holaaaaaaaa');
 });
+
+
+
+router.post('/:id/follow', isLoggedIn(), async(req, res, next) => {
+  const { id : idFollowing } = req.params;
+
+  const { _id: idFollower } = req.session.currentUser;
+
+  const followResult  = await Follow.findOne({following: idFollowing, follower: idFollower});
+
+  console.log('followResult', followResult);
+
+  if(!followResult) {
+    const createFollow = await Follow.create({following: idFollowing, follower: idFollower});
+    res.status(200).json({
+      message:"create",
+      follow: createFollow,
+    });
+  } else {
+    const deleteFollow = await Follow.findOneAndDelete({following: idFollowing, follower: idFollower});
+    res.status(200).json({
+      message:"deleted",
+      follow: deleteFollow,
+    });
+  }
+});
+
+router.get('/:username/followers', isLoggedIn(), async(req, res, next) => {
+  const { _id } = req.session.currentUser;
+
+  const follows = await Follow.find({follower: _id}).populate('following')
+  console.log('follows',follows);
+
+  res.status(200).json(follows);
+});
+
+router.get('/:username/line', isLoggedIn(), async(req, res, next) => {
+  const { username } = req.params;
+  console.log(username);
+
+  const user = await User.findOne({username: username})
+  console.log(user);
+
+
+
+  res.status(200).json(username);
+});
+
+
 
 router.get('/:username', isLoggedIn(), async (req, res, next) => {
   const { username } = req.params;

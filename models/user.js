@@ -22,11 +22,10 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  // follows: [
-  //   {
-  //     type: ObjectId,
-  //     ref: 'User'
-  //   }],
+  image: {
+    type: String,
+    required: true
+  },
   tuits: [{
       type: ObjectId,
       ref: 'Tuit'
