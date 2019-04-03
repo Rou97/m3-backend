@@ -78,7 +78,7 @@ router.get('/:username', isLoggedIn(), async (req, res, next) => {
   try {
 
     const user = await User.findOne({username});
-    const tuitsByUser = await Tuit.find({creator:user._id});
+    const tuitsByUser = await Tuit.find({creator:user._id}).populate('creator');
     
     if (tuitsByUser.length===0) {
       res.status(200);
