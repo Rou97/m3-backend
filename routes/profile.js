@@ -54,6 +54,7 @@ router.get('/:username/followers', isLoggedIn(), async(req, res, next) => {
   res.status(200).json(follows);
 });
 
+
 router.get('/line/:username', isLoggedIn(), async(req, res, next) => {
   const { _id } = req.session.currentUser;
   

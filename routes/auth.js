@@ -17,11 +17,8 @@ router.post('/login', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
       username
     })
     .then((user) => {
-      if (!user) {
-        const err = new Error('Not Found');
-        err.status = 404;
-        err.statusMessage = 'Not Found';
-        next(err)
+      if (!user) {;
+        return res.status(200).json({ message: 'User not found' });
       }
       if (bcrypt.compareSync(password, user.password)) {
         req.session.currentUser = user;
