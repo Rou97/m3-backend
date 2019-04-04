@@ -45,7 +45,7 @@ router.post('/:id/follow', isLoggedIn(), async(req, res, next) => {
   }
 });
 
-router.get('/:username/followers', isLoggedIn(), async(req, res, next) => {
+router.get('/followers', isLoggedIn(), async(req, res, next) => {
   const { _id } = req.session.currentUser;
 
   const follows = await Follow.find({follower: _id}).populate('following')
