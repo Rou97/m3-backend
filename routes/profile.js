@@ -62,7 +62,6 @@ router.get('/line/:username', isLoggedIn(), async(req, res, next) => {
     const follows = await Follow.find({follower: _id}).populate('following')
     const followedUsers = follows.reduce((acc,follow)=>acc.concat({ creator: follow.following._id.toString()}),[]);
     const tuitsToShow = await Tuit.find({ $or: followedUsers}).populate('creator');
-    console.log(tuitsToShow);
     res.status(200).json(tuitsToShow);
     
   } catch (error) {
